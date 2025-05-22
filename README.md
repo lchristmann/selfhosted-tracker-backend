@@ -10,6 +10,12 @@ The architecture of the Quokka Tracker Backend is very simple. There's three con
 - [PHP-FPM](https://www.php.net/manual/de/install.fpm.php) running a Laravel API
 - [PostgreSQL](https://www.postgresql.org/) database
 
+### Database Schema
+
+![Database schema](docs/db-schema.drawio.svg)
+
+This basic schema is extended by the Laravel framework's tables and the Laravel Sanctum table `personal_access_tokens`, which stored the authentication tokens for the users.
+
 ## Development
 
 In development, we use the `compose.dev.yaml`, which provides a `workspace` container with extra tools.
@@ -38,21 +44,34 @@ In production, we use the `compose.prod.yaml`, which only contains the three cor
 
 ## Table of Contents
 
-- [Overview](#overview)
-- [Project Structure](#project-structure)
-  - [Directory Structure](#directory-structure)
-  - [Development Environment](#development-environment)
-  - [Production Environment](#production-environment)
-- [Getting Started](#getting-started)
-  - [Clone the Repository](#clone-the-repository)
-  - [Setting Up the Development Environment](#setting-up-the-development-environment)
-- [Usage](#usage)
-- [Production Environment](#production-environment-1)
-  - [Building and Running the Production Environment](#building-and-running-the-production-environment)
-- [Technical Details](#technical-details)
-- [Contributing](#contributing)
-  - [How to Contribute](#how-to-contribute)
-- [License](#license)
+- [Quokka Tracker Backend](#quokka-tracker-backend)
+  - [Architecture](#architecture)
+    - [Database Schema](#database-schema)
+  - [Development](#development)
+  - [Deployment](#deployment)
+- [Laravel Docker Examples Project](#laravel-docker-examples-project)
+  - [Table of Contents](#table-of-contents)
+  - [Overview](#overview)
+  - [Project Structure](#project-structure)
+    - [Directory Structure](#directory-structure)
+    - [Production Environment](#production-environment)
+    - [Development Environment](#development-environment)
+  - [Getting Started](#getting-started)
+    - [Prerequisites](#prerequisites)
+    - [Clone the Repository](#clone-the-repository)
+    - [Setting Up the Development Environment](#setting-up-the-development-environment)
+  - [Usage](#usage)
+    - [Accessing the Workspace Container](#accessing-the-workspace-container)
+    - [Run Artisan Commands:](#run-artisan-commands)
+    - [Rebuild Containers:](#rebuild-containers)
+    - [Stop Containers:](#stop-containers)
+    - [View Logs:](#view-logs)
+  - [Production Environment](#production-environment-1)
+    - [Deploying](#deploying)
+  - [Technical Details](#technical-details)
+  - [Contributing](#contributing)
+    - [How to Contribute](#how-to-contribute)
+  - [License](#license)
 
 
 ## Overview
