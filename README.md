@@ -1,4 +1,40 @@
-# Laravel Docker Examples Project
+# Quokka Tracker Backend
+
+This is the backend (API + database) to the [Quokka Tracker Android App](https://github.com/lchristmann/quokka-tracker-android-app) client.
+
+## Architecture
+
+The architecture of the Quokka Tracker Backend is very simple. There's three containers in the Docker network:
+
+- [Nginx](https://nginx.org/) Server
+- [PHP-FPM](https://www.php.net/manual/de/install.fpm.php) running a Laravel API
+- [PostgreSQL](https://www.postgresql.org/) database
+
+## Development
+
+In development, we use the `compose.dev.yaml`, which provides a `workspace` container with extra tools.
+
+```shell
+docker compose -f compose.dev.yaml up -d
+docker compose -f compose.dev.yaml exec workspace bash
+  php artisan migrate # to set up the database structure
+  php artisan tinker
+  Location::factory()->count(2)->make()->toJson()
+docker compose -f compose.dev.yaml exec postgres bash
+  psql -d app -U laravel # password: secret
+  \dt
+  \d tablename
+```
+
+```shell
+docker compose -f compose.dev.yaml down
+```
+
+## Deployment
+
+In production, we use the `compose.prod.yaml`, which only contains the three core containers.
+
+# [Laravel Docker Examples Project](https://docs.docker.com/guides/frameworks/laravel/development-setup/)
 
 ## Table of Contents
 

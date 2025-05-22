@@ -23,11 +23,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     zip \
     bcmath \
     soap \
-    && pecl install redis \
-    && docker-php-ext-enable redis \
     && apt-get autoremove -y && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-   
+
 # Set the working directory inside the container
 WORKDIR /var/www
 
@@ -39,9 +37,9 @@ WORKDIR /var/www
 # Artisan commands like `php artisan package:discover`. If the
 # application code (including the `artisan` file) is not
 # present, these commands will fail, leading to build errors.
-# 
-# By copying the entire application code before running 
-# `composer install`, we ensure that all necessary files are 
+#
+# By copying the entire application code before running
+# `composer install`, we ensure that all necessary files are
 # available, allowing these scripts to run successfully.
 # In other cases, it would be possible to copy composer files
 # first, to leverage Docker's layer caching mechanism.
