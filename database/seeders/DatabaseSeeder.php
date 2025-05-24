@@ -3,8 +3,8 @@
 namespace Database\Seeders;
 
 use App\Models\User;
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Storage;
 
 class DatabaseSeeder extends Seeder
 {
@@ -13,17 +13,17 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        User::factory()
-            ->count(2)
-            ->hasLocations(100)
-            ->create();
+        $users = collect([
+            User::factory()->count(2)->hasLocations(100)->create(),
+            User::factory()->hasLocations(50)->create(),
+            User::factory()->count(2)->create()
+        ])->flatten();
 
-        User::factory()
-            ->hasLocations(50)
-            ->create();
+        $lines = $users->map(function (User $user) {
+            $token = $user->createToken('basic-token');
+            return "{$user->id} | {$user->name} | {$token->plainTextToken}";
+        });
 
-        User::factory()
-            ->count(2)
-            ->create();
+        file_put_contents(base_path('sanctum_tokens.txt'), $lines->implode("\n"));
     }
 }

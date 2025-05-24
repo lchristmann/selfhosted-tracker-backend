@@ -16,6 +16,24 @@ The architecture of the Quokka Tracker Backend is very simple. There's three con
 
 This basic schema is extended by the Laravel framework's tables and the Laravel Sanctum table `personal_access_tokens`, which stored the authentication tokens for the users.
 
+### API Schema
+
+All endpoints are guarded with the `auth:sanctum` authentication middleware, i.e. clients
+must always use their personal access token, which identifies them as a specific user.
+This enables the `/me` endpoints.
+
+| Method | Endpoint              | Description                  | Resource |
+|--------|-----------------------|------------------------------|----------|
+| GET    | /me                   | fetch **my** profile         | User     |
+| PATCH  | /me                   | update **my** profile        | User     |
+| GET    | /me/locations         | fetch **my** locations       | Location |
+| POST   | /me/locations         | upload locations **of mine** | Location |
+|        |                       |                              |          |
+| GET    | /users                | fetch **all** profiles       | User     |
+| GET    | /users/{id}           | fetch **a user's** profile   | User     |
+| GET    | /users/{id}/locations | fetch **a user's** locations | Location |
+
+
 ## Development
 
 In development, we use the `compose.dev.yaml`, which provides a `workspace` container with extra tools.
