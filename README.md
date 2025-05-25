@@ -22,26 +22,63 @@ All endpoints are guarded with the `auth:sanctum` authentication middleware, i.e
 must always use their personal access token, which identifies them as a specific user.
 This enables the `/me` endpoints.
 
-| Method | Endpoint              | Description                  | Resource |
-|--------|-----------------------|------------------------------|----------|
-| GET    | /me                   | fetch **my** profile         | User     |
-| PATCH  | /me                   | update **my** profile        | User     |
-| GET    | /me/locations         | fetch **my** locations       | Location |
-| POST   | /me/locations         | upload locations **of mine** | Location |
-|        |                       |                              |          |
-| GET    | /users                | fetch **all** profiles       | User     |
-| GET    | /users/{id}           | fetch **a user's** profile   | User     |
-| GET    | /users/{id}/locations | fetch **a user's** locations | Location |
+| Method | Endpoint                | Description                      | Resource |
+|--------|-------------------------|----------------------------------|----------|
+| GET    | /me                     | fetch **my** profile             | User     |
+| PUT    | /me                     | update **all my** profile        | User     |
+| PATCH  | /me                     | update **some of my** profile    | User     |
+| GET    | /me/image               | fetch **my** profile image       | User     |
+| GET    | /me/locations           | fetch **my** locations           | Location |
+| POST   | /me/locations           | upload locations **of mine**     | Location |
+|        |                         |                                  |          |
+| GET    | /users                  | fetch **all** profiles           | User     |
+| GET    | /users/{user}           | fetch **a user's** profile       | User     |
+| GET    | /users/{user}/image     | fetch **a user's** profile image | User     |
+| GET    | /users/{user}/locations | fetch **a user's** locations     | Location |
 
+**`PUT or PATCH /me` endpoint usage:**
+- send a `POST` request instead of `PUT` or `PATCH`
+- send multipart form-data
+- you can use the `name` (text) and `image`(file) fields
+- you must use the `_method` (text) field with a value of `PUT` or `PATCH`, so Laravel knows it's a `PUT` or `PATCH` request ([Form Method Spoofing](https://laravel.com/docs/12.x/routing#form-method-spoofing))
+- reason for all of this: [PHP doesn't parse multipart form-data unless the request method is `POST`](https://stackoverflow.com/a/61768745/20594090)
+
+### API Consumption
+
+When making HTTP requests to the API,
+send those headers:
+
+- Accept: application/json
+- Authorization: Bearer <your_api_token>
+
+Example answer for the `GET /api/v1/users` endpoint:
+
+```json
+{
+    "data": [
+        {
+            "id": 1,
+            "name": "Drew Mosciski",
+            "hasImage": false
+        },
+        {
+            "id": 2,
+            "name": "Misael Hills",
+            "hasImage": true
+        }
+    ]
+}
+```
 
 ## Development
 
 In development, we use the `compose.dev.yaml`, which provides a `workspace` container with extra tools.
 
 ```shell
-docker compose -f compose.dev.yaml up -d
+docker compose -f compose.dev.yaml up -d # Start
 docker compose -f compose.dev.yaml exec workspace bash
   php artisan migrate # to set up the database structure
+  php artisan migrate:fresh --seed
   php artisan tinker
   Location::factory()->count(2)->make()->toJson()
 docker compose -f compose.dev.yaml exec postgres bash
@@ -50,8 +87,12 @@ docker compose -f compose.dev.yaml exec postgres bash
   \d tablename
 ```
 
+Note: the seeding process creates two types of artifacts:
+- `sanctum_tokens.txt`: a file with user information + API tokens of those users (use those for testing)
+- `storage/app/*.[svg|png]`: images for the users (with 50% coin-flip chance a user gets an image)
+
 ```shell
-docker compose -f compose.dev.yaml down
+docker compose -f compose.dev.yaml down # Shut down
 ```
 
 ## Deployment
