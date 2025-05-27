@@ -1,6 +1,18 @@
-# Quokka Tracker Backend
+# Quokka Tracker Backend <!-- omit in toc -->
 
-This is the backend (API + database) to the [Quokka Tracker Android App](https://github.com/lchristmann/quokka-tracker-android-app) client.
+## Table of Contents <!-- omit in toc -->
+
+- [Architecture](#architecture)
+  - [Database Schema](#database-schema)
+  - [API Schema](#api-schema)
+- [Development](#development)
+  - [Helpful commands](#helpful-commands)
+  - [Notes on the database seeding process](#notes-on-the-database-seeding-process)
+- [Deployment / Setup](#deployment--setup)
+- [Administration](#administration)
+- [Maintenance](#maintenance)
+
+This is the backend to the [Quokka Tracker Android App](https://github.com/lchristmann/quokka-tracker-android-app) client.
 
 ## Architecture
 
@@ -14,7 +26,7 @@ The architecture of the Quokka Tracker Backend is very simple. There's three con
 
 ![Database schema](docs/db-schema.drawio.svg)
 
-This basic schema is extended by the Laravel framework's tables and the Laravel Sanctum table `personal_access_tokens`, which stored the authentication tokens for the users.
+This basic schema is extended by the Laravel framework's tables and the Laravel Sanctum table `personal_access_tokens`, which stores the authentication tokens for the users.
 
 ### API Schema
 
@@ -36,46 +48,28 @@ This enables the `/me` endpoints.
 | GET    | /users/{user}/image     | fetch **a user's** profile image | User     |
 | GET    | /users/{user}/locations | fetch **a user's** locations     | Location |
 
-**`PUT or PATCH /me` endpoint usage:**
-- send a `POST` request instead of `PUT` or `PATCH`
-- send multipart form-data
-- you can use the `name` (text) and `image`(file) fields
-- you must use the `_method` (text) field with a value of `PUT` or `PATCH`, so Laravel knows it's a `PUT` or `PATCH` request ([Form Method Spoofing](https://laravel.com/docs/12.x/routing#form-method-spoofing))
-- reason for all of this: [PHP doesn't parse multipart form-data unless the request method is `POST`](https://stackoverflow.com/a/61768745/20594090)
-
-### API Consumption
-
-When making HTTP requests to the API,
-send those headers:
-
-- Accept: application/json
-- Authorization: Bearer <your_api_token>
-
-Example answer for the `GET /api/v1/users` endpoint:
-
-```json
-{
-    "data": [
-        {
-            "id": 1,
-            "name": "Drew Mosciski",
-            "hasImage": false
-        },
-        {
-            "id": 2,
-            "name": "Misael Hills",
-            "hasImage": true
-        }
-    ]
-}
-```
+**For usage see the [API Documentation](docs/API-DOCUMENTATION.md).**
 
 ## Development
 
-In development, we use the `compose.dev.yaml`, which provides a `workspace` container with extra tools.
+The code follows the standard Laravel conventions.
+
+The hardest part is probably the big SQL query at the bottom of the `LocationController.php` class. The [SQL-QUERY-EXPLANATION.md](docs/SQL-QUERY-EXPLANATION.md) document helps you understand it.
+
+For development, we use the `compose.dev.yaml`, which provides a `workspace` container with extra tools.
+Consider reading the [dedicated documentation](docs/DOCKER-COMPOSE.md) of this project's Docker Compose setup for further understanding.
 
 ```shell
-docker compose -f compose.dev.yaml up -d # Start
+docker compose -f compose.dev.yaml up -d # Start the setup
+```
+
+```shell
+docker compose -f compose.dev.yaml down # Shut it down
+```
+
+### Helpful commands
+
+```shell
 docker compose -f compose.dev.yaml exec workspace bash
   php artisan migrate # to set up the database structure
   php artisan migrate:fresh --seed
@@ -87,277 +81,23 @@ docker compose -f compose.dev.yaml exec postgres bash
   \d tablename
 ```
 
-Note: the seeding process creates two types of artifacts:
+### Notes on the database seeding process
+
+There are two types of artifacts created:
+
 - `sanctum_tokens.txt`: a file with user information + API tokens of those users (use those for testing)
 - `storage/app/*.[svg|png]`: images for the users (with 50% coin-flip chance a user gets an image)
 
-```shell
-docker compose -f compose.dev.yaml down # Shut down
-```
+## Deployment / Setup
 
-## Deployment
+In production, we use the `compose.prod.yaml`, which only contains the three core containers (no workspace container).
 
-In production, we use the `compose.prod.yaml`, which only contains the three core containers.
+For detailed instructions on how to set up the Quokka Tracker Backend, visit the [Setup Guide](docs/SETUP-GUIDE.md).
 
-# [Laravel Docker Examples Project](https://docs.docker.com/guides/frameworks/laravel/development-setup/)
+## Administration
 
-## Table of Contents
+See the [Administration Guide](docs/ADMIN-GUIDE.md).
 
-- [Quokka Tracker Backend](#quokka-tracker-backend)
-  - [Architecture](#architecture)
-    - [Database Schema](#database-schema)
-  - [Development](#development)
-  - [Deployment](#deployment)
-- [Laravel Docker Examples Project](#laravel-docker-examples-project)
-  - [Table of Contents](#table-of-contents)
-  - [Overview](#overview)
-  - [Project Structure](#project-structure)
-    - [Directory Structure](#directory-structure)
-    - [Production Environment](#production-environment)
-    - [Development Environment](#development-environment)
-  - [Getting Started](#getting-started)
-    - [Prerequisites](#prerequisites)
-    - [Clone the Repository](#clone-the-repository)
-    - [Setting Up the Development Environment](#setting-up-the-development-environment)
-  - [Usage](#usage)
-    - [Accessing the Workspace Container](#accessing-the-workspace-container)
-    - [Run Artisan Commands:](#run-artisan-commands)
-    - [Rebuild Containers:](#rebuild-containers)
-    - [Stop Containers:](#stop-containers)
-    - [View Logs:](#view-logs)
-  - [Production Environment](#production-environment-1)
-    - [Deploying](#deploying)
-  - [Technical Details](#technical-details)
-  - [Contributing](#contributing)
-    - [How to Contribute](#how-to-contribute)
-  - [License](#license)
+## Maintenance
 
-
-## Overview
-
-The **Laravel Docker Examples Project** offers practical and modular examples for Laravel developers to create efficient Docker environments for development and production. This project demonstrates modern Docker best practices, including multi-stage builds, modular configurations, and environment-specific customization. It is designed to be educational, flexible, and extendable, providing a solid foundation for Dockerizing Laravel applications.
-
-
-## Project Structure
-
-The project is organized as a typical Laravel application, with the addition of a `docker` directory containing the Docker configurations and scripts. These are separated by environments and services. There are two main Docker Compose projects in the root directory:
-
-- **compose.dev.yaml**: Orchestrates the development environment.
-- **compose.prod.yaml**: Orchestrates the production environment.
-
-### Directory Structure
-
-```
-project-root/ 
-├── app/ # Laravel app folder
-├── ...  # Other Laravel files and directories 
-├── docker/ 
-│   ├── common/ # Shared configurations
-│   ├── development/ # Development-specific configurations 
-│   ├── production/ # Production-specific configurations
-├── compose.dev.yaml # Docker Compose for development 
-├── compose.prod.yaml # Docker Compose for production 
-└── .env.example # Example environment configuration
-```
-
-This modular structure ensures shared logic between environments while allowing environment-specific customizations.
-
-
-### Production Environment
-
-The production environment is configured using the `compose.prod.yaml` file. It is optimized for performance and security, using multi-stage builds and runtime-only dependencies. It uses a shared PHP-FPM multi-stage build with the target `production`.
-
-- **Optimized Images**: Multi-stage builds ensure minimal image size and enhanced security.
-- **Pre-Built Assets**: Assets are compiled during the build process, ensuring the container is ready to serve content immediately upon deployment.
-- **Health Checks**: Built-in health checks monitor service statuses and ensure smooth operation.
-- **Security Best Practices**: Minimizes the attack surface by excluding unnecessary packages and users.
-- **Docker Compose for Production**: Tailored for deploying Laravel applications with Nginx, PHP-FPM, Redis, and PostgreSQL.
-
-This environment is designed for easy deployment to any Docker-compatible hosting platform.
-
-
-### Development Environment
-
-The development environment is configured using the `compose.dev.yaml` file and is built on top of the production version. This ensures the development environment is as close to production as possible while still supporting tools like Xdebug and writable permissions.
-
-Key features include:
-- **Close Parity with Production**: Mirrors the production environment to minimize deployment issues.
-- **Development Tools**: Includes Xdebug for debugging and writable permissions for mounted volumes.
-- **Hot Reloading**: Volume mounts enable real-time updates to the codebase without rebuilding containers.
-- **Services**: PHP-FPM, Nginx, Redis, PostgreSQL, and Node.js (via NVM).
-- **Custom Dockerfiles**: Extends shared configurations to include development-specific tools.
-
-To set up the development environment, follow the steps in the **Getting Started** section.
-
-
-## Getting Started
-
-Follow these steps to set up and run the Laravel Docker Examples Project:
-
-### Prerequisites
-Ensure you have Docker and Docker Compose installed. You can verify by running:
-
-```bash
-docker --version
-docker compose version
-```
-
-If these commands do not return the versions, install Docker and Docker Compose using the official documentation: [Docker](https://docs.docker.com/get-docker/) and [Docker Compose](https://docs.docker.com/compose/install/).
-
-### Clone the Repository
-
-```bash
-git clone https://github.com/rw4lll/laravel-docker-examples.git
-cd laravel-docker-examples
-```
-
-### Setting Up the Development Environment
-
-1. Copy the .env.example file to .env and adjust any necessary environment variables:
-
-```bash
-cp .env.example .env
-```
-
-Hint: adjust the `UID` and `GID` variables in the `.env` file to match your user ID and group ID. You can find these by running `id -u` and `id -g` in the terminal.
-
-2. Start the Docker Compose Services:
-
-```bash
-docker compose -f compose.dev.yaml up -d
-```
-
-3. Install Laravel Dependencies:
-
-```bash
-docker compose -f compose.dev.yaml exec workspace bash
-composer install
-npm install
-npm run dev
-```
-
-4. Run Migrations:
-
-```bash
-docker compose -f compose.dev.yaml exec workspace php artisan migrate
-```
-
-5. Access the Application:
-
-Open your browser and navigate to [http://localhost](http://localhost).
-
-## Usage
-
-Here are some common commands and tips for using the development environment:
-
-### Accessing the Workspace Container
-
-The workspace sidecar container includes Composer, Node.js, NPM, and other tools necessary for Laravel development (e.g. assets building).
-
-```bash
-docker compose -f compose.dev.yaml exec workspace bash
-```
-
-### Run Artisan Commands:
-
-```bash
-docker compose -f compose.dev.yaml exec workspace php artisan migrate
-```
-
-### Rebuild Containers:
-
-```bash
-docker compose -f compose.dev.yaml up -d --build
-```
-
-### Stop Containers:
-
-```bash
-docker compose -f compose.dev.yaml down
-```
-
-### View Logs:
-
-```bash
-docker compose -f compose.dev.yaml logs -f
-```
-
-For specific services, you can use:
-
-```bash
-docker compose -f compose.dev.yaml logs -f web
-```
-
-## Production Environment
-
-The production environment is designed with security and efficiency in mind:
-
-- **Optimized Docker Images**: Uses multi-stage builds to minimize the final image size, reducing the attack surface.
-- **Environment Variables Management**: Sensitive data such as passwords and API keys are managed carefully to prevent exposure.
-- **User Permissions**: Containers run under non-root users where possible to follow the principle of least privilege.
-- **Health Checks**: Implemented to monitor the status of services and ensure they are functioning correctly.
-- **HTTPS Setup**: While not included in this example, it's recommended to configure SSL certificates and use HTTPS in a production environment.
-
-
-### Deploying
-
-The production image can be deployed to any Docker-compatible hosting environment, such as AWS ECS, Kubernetes, or a traditional VPS.
-
-## Technical Details
-
-- **PHP**: Version **8.3 FPM** is used for optimal performance in both development and production environments.
-- **Node.js**: Version **22.x** is used in the development environment for building frontend assets with Vite.
-- **PostgreSQL**: Version **16** is used as the database in the examples, but you can adjust the configuration to use MySQL if preferred.
-- **Redis**: Used for caching and session management, integrated into both development and production environments.
-- **Nginx**: Used as the web server to serve the Laravel application and handle HTTP requests.
-- **Docker Compose**: Orchestrates the services, simplifying the process of starting and stopping the environment.
-- **Health Checks**: Implemented in the Docker Compose configurations and Laravel application to ensure all services are operational.
-
-
-## Contributing
-
-Contributions are welcome! Whether you find a bug, have an idea for improvement, or want to add a new feature, your input is valuable.
-
-### How to Contribute
-
-1. **Fork the Repository:**
-
-   Click the "Fork" button at the top right of this page to create your own copy of the repository.
-
-2. **Clone Your Fork:**
-
-```bash
-    git clone https://github.com/your-user-name/laravel-docker-examples.git
-    cd laravel-docker-examples
-```
-
-3. Create a Branch:
-
-```bash
-    git checkout -b your-feature-branch
-```
-
-4. Make Your Changes.
-
-    Implement your changes or additions.
-
-5. Commit Your Changes:
-
-```bash
-git commit -m "Description of changes"
-```
-
-6. Push to Your Fork:
-
-```bash
-    git push origin feature-branch
-```
-
-7. Submit a Pull Request:
-    - Go to the original repository.
-    - Click on "Pull Requests" and then "New Pull Request."
-    - Select your fork and branch, and submit your pull request.
-
-## License
-
-This project is licensed under the MIT License. See the LICENSE file for more details.
+This project is developed and maintained by [Leander Christmann](https://stackoverflow.com/users/20594090/lchristmann). In case of questions, feel free to [write me an email](mailto:hello@lchristmann.com).

@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->decimal('latitude', 9, 7);
             $table->decimal('longitude', 10, 7);
-            $table->timestamp('timestamp');
+            $table->bigInteger('timestamp')->unsigned(); // Unix epoch timestamp in milliseconds
             $table->index(['user_id', 'timestamp']);
         });
     }

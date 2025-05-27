@@ -21,7 +21,7 @@ class LocationFactory extends Factory
             'user_id' => User::inRandomOrder()->first()->id,
             'latitude' => fake()->latitude(),
             'longitude' => fake()->longitude(),
-            'timestamp' => fake()->dateTimeBetween('-1 month'),
+            'timestamp' => fake()->dateTimeBetween('-2 month')->getTimestamp() * 1000,
         ];
     }
 }

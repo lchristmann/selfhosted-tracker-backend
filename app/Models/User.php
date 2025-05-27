@@ -28,15 +28,5 @@ class User extends Authenticatable
         return false;
     }
 
-    protected $fillable = [
-        'name',
-    ];
-
-    protected static function booted(): void
-    {
-        self::deleting(function (User $user) {
-            $user->tokens()->delete();
-        });
-    }
-
+    protected $fillable = ['name'];
 }

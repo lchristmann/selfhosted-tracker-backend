@@ -18,8 +18,7 @@ class DatabaseSeeder extends Seeder
         File::put(base_path('sanctum_tokens.txt'), ''); // create empty file
 
         $users = collect([
-            User::factory()->count(2)->hasLocations(100)->create(),
-            User::factory()->hasLocations(50)->create(),
+            User::factory()->count(2)->hasLocations(200)->create(),
             User::factory()->count(2)->create()
         ])->flatten();
 
