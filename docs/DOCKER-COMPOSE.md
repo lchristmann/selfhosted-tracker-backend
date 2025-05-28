@@ -114,10 +114,10 @@ cd laravel-docker-examples
 
 ### Setting Up the Development Environment
 
-1. Copy the .env.example file to .env and adjust any necessary environment variables:
+1. Copy the .env.dev.example file to .env and adjust any necessary environment variables:
 
 ```bash
-cp .env.example .env
+cp .env.dev.example .env
 ```
 
 Hint: adjust the `UID` and `GID` variables in the `.env` file to match your user ID and group ID. You can find these by running `id -u` and `id -g` in the terminal.
