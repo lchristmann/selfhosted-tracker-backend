@@ -7,32 +7,33 @@
   - [API Schema](#api-schema)
 - [Development](#development)
   - [Helpful commands](#helpful-commands)
-  - [Notes on the database seeding process](#notes-on-the-database-seeding-process)
-- [Deployment / Setup](#deployment--setup)
+  - [Database Seeding](#database-seeding)
+- [Deployment](#deployment)
 - [Administration](#administration)
 - [Maintenance](#maintenance)
 
-This is the backend to the [Quokka Tracker Android App](https://github.com/lchristmann/quokka-tracker-android-app) client.
+This Quokka Tracker Backend powers the [Quokka Tracker Android App](https://github.com/lchristmann/quokka-tracker-android-app). It is a lightweight, containerized Laravel API
+for managing user profiles and associated location data.
 
 ## Architecture
 
-The architecture of the Quokka Tracker Backend is very simple. There's three containers in the Docker network:
+The backend is composed of three Docker containers:
 
-- [Nginx](https://nginx.org/) Server
-- [PHP-FPM](https://www.php.net/manual/de/install.fpm.php) running a Laravel API
-- [PostgreSQL](https://www.postgresql.org/) database
+- [Nginx](https://nginx.org/): Web Server
+- [PHP-FPM](https://www.php.net/manual/de/install.fpm.php): Laravel API runtime
+- [PostgreSQL](https://www.postgresql.org/): Database
 
 ### Database Schema
 
 ![Database schema](docs/db-schema.drawio.svg)
 
-This basic schema is extended by the Laravel framework's tables and the Laravel Sanctum table `personal_access_tokens`, which stores the authentication tokens for the users.
+In addition to the application-specific tables, Laravel adds its standard tables and there's the Laravel Sanctum table `personal_access_tokens`, which stores the authentication tokens for users.
 
 ### API Schema
 
-All endpoints are guarded with the `auth:sanctum` authentication middleware, i.e. clients
-must always use their personal access token, which identifies them as a specific user.
-This enables the `/me` endpoints.
+All endpoints are protected using Laravel Sanctum's `auth:sanctum` middleware.
+Clients must include their personal access token in every request.
+This ensures secure access and enables `/me`-scoped endpoints for user-specific data.
 
 | Method | Endpoint                | Description                      | Resource |
 |--------|-------------------------|----------------------------------|----------|
@@ -48,16 +49,13 @@ This enables the `/me` endpoints.
 | GET    | /users/{user}/image     | fetch **a user's** profile image | User     |
 | GET    | /users/{user}/locations | fetch **a user's** locations     | Location |
 
-**For usage see the [API Documentation](docs/API-DOCUMENTATION.md).**
+**See the [API Documentation](docs/API-DOCUMENTATION.md) for detailed usage.**
 
 ## Development
 
-The code follows the standard Laravel conventions.
-
-The hardest part is probably the big SQL query at the bottom of the `LocationController.php` class. The [SQL-QUERY-EXPLANATION.md](docs/SQL-QUERY-EXPLANATION.md) document helps you understand it.
-
-For development, we use the `compose.dev.yaml`, which provides a `workspace` container with extra tools.
-Consider reading the [dedicated documentation](docs/DOCKER-COMPOSE.md) of this project's Docker Compose setup for further understanding.
+This project adheres to standard [Laravel](https://laravel.com/docs/12.x) conventions.
+The development environment uses a [Docker Compose setup](docs/DOCKER-COMPOSE.md) defined in `compose.dev.yaml`,
+which includes an additional workspace container with helpful CLI tools.
 
 ```shell
 docker compose -f compose.dev.yaml up -d # Start the setup
@@ -67,6 +65,8 @@ docker compose -f compose.dev.yaml up -d # Start the setup
 docker compose -f compose.dev.yaml down # Shut it down
 ```
 
+The most complex part of the codebase is a large SQL query in `LocationController.php`. Refer to [SQL-QUERY-EXPLANATION.md](docs/SQL-QUERY-EXPLANATION.md) for an in-depth breakdown.
+
 ### Helpful commands
 
 ```shell
@@ -75,29 +75,34 @@ docker compose -f compose.dev.yaml exec workspace bash
   php artisan migrate:fresh --seed
   php artisan tinker
   Location::factory()->count(2)->make()->toJson()
+  
 docker compose -f compose.dev.yaml exec postgres bash
   psql -d app -U laravel # password: secret
   \dt
   \d tablename
 ```
 
-### Notes on the database seeding process
+### Database Seeding
 
-There are two types of artifacts created:
+Seeding the database generates:
 
-- `sanctum_tokens.txt`: a file with user information + API tokens of those users (use those for testing)
-- `storage/app/*.[svg|png]`: images for the users (with 50% coin-flip chance a user gets an image)
+- `sanctum_tokens.txt`: Contains test users and their API tokens.
+- `storage/app/*.[svg|png]`: User profile images (50% chance per user).
 
-## Deployment / Setup
+## Deployment
 
-In production, we use the `compose.prod.yaml`, which only contains the three core containers (no workspace container).
+For production, use the minimal `compose.prod.yaml` file (no workspace container). It includes only the essential containers.
 
-For detailed instructions on how to set up the Quokka Tracker Backend, visit the [Setup Guide](docs/SETUP-GUIDE.md).
+Follow the [Setup Guide](docs/SETUP-GUIDE.md) for full deployment instructions.
 
 ## Administration
 
-See the [Administration Guide](docs/ADMIN-GUIDE.md).
+Admin tasks (such as user management) are performed using custom Artisan commands.
+
+See the [Administration Guide](docs/ADMIN-GUIDE.md) for details.
 
 ## Maintenance
 
-This project is developed and maintained by [Leander Christmann](https://stackoverflow.com/users/20594090/lchristmann). In case of questions, feel free to [write me an email](mailto:hello@lchristmann.com).
+This project actively maintained by [Leander Christmann](https://github.com/lchristmann).
+
+For questions or support, feel free to [email me](mailto:hello@lchristmann.com).
