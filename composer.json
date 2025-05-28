@@ -1,12 +1,12 @@
 {
-    "name": "laravel/laravel",
+    "name": "lchristmann/quokka-tracker-backend",
     "type": "project",
-    "description": "The skeleton application for the Laravel framework.",
+    "description": "The Quokka Tracker Backend.",
     "keywords": ["laravel", "framework"],
     "license": "MIT",
     "require": {
-        "php": "^8.2",
-        "laravel/framework": "^12.15",
+        "php": "^8.3",
+        "laravel/framework": "^12.16",
         "laravel/sanctum": "^4.0",
         "laravel/tinker": "^2.9"
     },
