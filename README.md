@@ -1,6 +1,7 @@
 # Quokka Tracker Backend <!-- omit in toc -->
 
-> The self-hosted setup is incredibly easy - just follow the instructions in the [setup guide](docs/SETUP-GUIDE.md).
+> The self-hosted setup is incredibly easy - just follow the instructions in the [setup guide](docs/SETUP-GUIDE.md)
+> and the tiny [upgrade guide](docs/UPGRADE-GUIDE.md).
 
 > As a Quokka Tracker Administrator, consider the [admin guide](docs/ADMIN-GUIDE.md).
 

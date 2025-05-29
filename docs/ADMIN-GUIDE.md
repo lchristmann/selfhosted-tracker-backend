@@ -1,6 +1,6 @@
 # Administrator's Guide
 
-1. Connect to the server via SSH.
+1. Connect to your server via SSH.
 2. Enter the php-fpm container:
    ```shell
    docker compose exec php-fpm bash
