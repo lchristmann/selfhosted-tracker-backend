@@ -11,7 +11,7 @@ services:
       # -----------------------------------------------------------
       - laravel-storage-production:/var/www/storage:ro
     networks:
-      - laravel-production
+      - quokka-tracker-backend-network
     ports:
       # Map port 80 inside the container to the port specified by 'NGINX_PORT' on the host machine.
       # -----------------------------------------------------------
@@ -32,7 +32,7 @@ services:
     env_file:
       - .env
     networks:
-      - laravel-production
+      - quokka-tracker-backend-network
     healthcheck:
       test: ["CMD-SHELL", "php-fpm-healthcheck || exit 1"]
       interval: 10s
@@ -58,7 +58,7 @@ services:
     volumes:
       - postgres-data-production:/var/lib/postgresql/data
     networks:
-      - laravel-production
+      - quokka-tracker-backend-network
     # Health check for PostgreSQL
     # -----------------------------------------------------------
     # Health checks allow Docker to determine if a service is operational.
@@ -77,7 +77,8 @@ networks:
   # This custom network allows all services within it to communicate using their service names as hostnames.
   # For example, 'php-fpm' can connect to 'postgres' by using 'postgres' as the hostname.
   # -----------------------------------------------------------
-  laravel-production:
+  quokka-tracker-backend-network:
+    external: true
 
 volumes:
   postgres-data-production:

@@ -3,7 +3,7 @@
 1. Connect to the server via SSH.
 2. Enter the php-fpm container:
    ```shell
-   docker exec compose.prod.yaml exec php-fpm bash
+   docker compose exec php-fpm bash
    ```
 
 ## Create a user (incl. an access token)
