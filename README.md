@@ -138,7 +138,7 @@ git push origin "${VERSION}"
 
 Finally, [create a GitHub release](https://github.com/lchristmann/quokka-tracker-backend/releases) via the GitHub UI -
 it's takes the Git tag and lets you add some meta-information to it.
-Give a title like `v1.0.0`, a heading like `## What's changed` and then put a list `* x, * y, * z` of changes.
+Give a title like `1.1.0`, a heading like `## What's Changed` and put a bullet point list of changes.
 
 ### Test the new release
 

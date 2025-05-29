@@ -28,7 +28,7 @@
     docker network create quokka-tracker-backend-network
     docker compose up -d
     ```
-6. Generate a new `APP_KEY` and replace it in the `.env` file (format `base64:xyz...`)
+6. Set a newly generated `APP_KEY` in the `.env` file (format `base64:xyz...`)
     ```shell
     docker compose exec php-fpm bash
     php artisan key:generate --show
