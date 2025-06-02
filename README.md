@@ -80,6 +80,8 @@ The most complex part of the codebase is a large SQL query in `LocationControlle
 
 ```shell
 docker compose -f compose.dev.yaml exec workspace bash
+  composer install # run this on first checkout
+  php artisan key:generate --show # paste this on first checkout to .env and restart the setup
   php artisan migrate # to set up the database structure
   php artisan migrate:fresh --seed
   php artisan tinker
