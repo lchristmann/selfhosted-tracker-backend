@@ -8,16 +8,16 @@
 
 1. Create a folder
     ```shell
-    mkdir /opt/quokka-tracker-backend
-    cd /opt/quokka-tracker-backend
+    mkdir /opt/tracker-backend
+    cd /opt/tracker-backend
     ```
 2. Download the `docker-compose.yml`
     ```shell
-    curl -L https://raw.githubusercontent.com/lchristmann/quokka-tracker-backend/main/docker-compose.yaml -o docker-compose.yaml
+    curl -L https://raw.githubusercontent.com/lchristmann/tracker-backend/main/docker-compose.yaml -o docker-compose.yaml
     ```
 3. Download the `.env.example` and save it as `env` file
     ```shell
-    curl -L https://raw.githubusercontent.com/lchristmann/quokka-tracker-backend/main/.env.example -o .env
+    curl -L https://raw.githubusercontent.com/lchristmann/tracker-backend/main/.env.example -o .env
     ```
 4. Edit the `.env` file and set the `APP_URL` to your domain or public IP address
     ```shell
@@ -25,7 +25,7 @@
     ```
 5. Create the Docker network and start the services
     ```shell
-    docker network create quokka-tracker-backend-network
+    docker network create tracker-backend-network
     docker compose up -d
     ```
 6. Set a newly generated `APP_KEY` in the `.env` file (format `base64:xyz...`)
@@ -58,14 +58,14 @@ Since Let's Encrypt doesn’t issue certificates for IP addresses and browsers d
 
 1. Point your (sub)domain to your server's public IP, e.g.
    ```text
-   A quokka-tracker.example.com 192.168.1.1
+   A tracker.example.com 192.168.1.1
    ```
 2. Edit the `.env` file and set the `APP_URL` to your (sub)domain prefixed with `https://`.
    ```shell
-   cd /opt/quokka-tracker-backend
+   cd /opt/tracker-backend
    nano .env
    ```
-3. Edit the `docker-compose.yaml` file and comment out the entire ports section. (This ensures the `web` service is only reachable internally in the `quokka-tracker-backend-network` Docker network)
+3. Edit the `docker-compose.yaml` file and comment out the entire ports section. (This ensures the `web` service is only reachable internally in the `tracker-backend-network` Docker network)
    ```shell
    nano .env
    ```
@@ -102,16 +102,16 @@ Since Let's Encrypt doesn’t issue certificates for IP addresses and browsers d
             - ./data:/data
             - ./letsencrypt:/etc/letsencrypt
       ```
-      Also paste this, to put the Nginx Proxy Manager into the `quokka-tracker-backend-network` Docker network.
-      This is the single point of access to the Quokka Tracker Backend now.
+      Also paste this, to put the Nginx Proxy Manager into the `tracker-backend-network` Docker network.
+      This is the single point of access to the Tracker Backend now.
       ```yaml
           # This one level nested under the 'app' service
           networks:
-            - quokka-tracker-backend-network
+            - tracker-backend-network
 
       # This on the root level, not nested at all
       networks:
-        quokka-tracker-backend-network:
+        tracker-backend-network:
           external: true
       ```
    3. Bring it up by running
@@ -130,22 +130,22 @@ Since Let's Encrypt doesn’t issue certificates for IP addresses and browsers d
       | Email    | admin@example.com   |
       | Password | changeme            |
        You'll be prompted to change those credentials immediately after logging in.
-   6. Find the container name of your Quokka Tracker Backend's `web` service
+   6. Find the container name of your Tracker Backend's `web` service
       ```yaml
-      docker ps --format "{{.Image}} {{.Names}}" | grep '^leanderchristmann/quokka-tracker-backend-nginx' | awk '{print $2}'
-      # quokka-tracker-backend-web-1 <- usual output
+      docker ps --format "{{.Image}} {{.Names}}" | grep '^leanderchristmann/tracker-backend-nginx' | awk '{print $2}'
+      # tracker-backend-web-1 <- usual output
       ```
-      > You can also check the name manually by looking at `docker ps` output: it's the rightmost column of the container with the `IMAGE` `leanderchristmann/quokka-tracker-backend-nginx:{VERSION}`.
+      > You can also check the name manually by looking at `docker ps` output: it's the rightmost column of the container with the `IMAGE` `leanderchristmann/tracker-backend-nginx:{VERSION}`.
    7. In the Nginx Proxy Manager visit Dashboard > Proxy Hosts > Add Proxy Hosts:
        - "Details" Tab
 
-         | Setting               | Value                      | Example                        | Explanation                                                                        |
-         |-----------------------|----------------------------|--------------------------------|------------------------------------------------------------------------------------|
-         | Domain Names          | your domain name           | `quokka-tracker.example.com`   |                                                                                    |
-         | Scheme                | http                       |                                | This is only Docker network internal, we'll force HTTPS for internet traffic later |
-         | Forward Hostname / IP | the `web` container's name | `quokka-tracker-backend-web-1` | See previous step                                                                  |
-         | Forward Port          | 80                         |                                |                                                                                    |
-         | Block Common Exploits | yes                        |                                |                                                                                    |
+         | Setting               | Value                      | Example                 | Explanation                                                                        |
+         |-----------------------|----------------------------|-------------------------|------------------------------------------------------------------------------------|
+         | Domain Names          | your domain name           | `tracker.example.com`   |                                                                                    |
+         | Scheme                | http                       |                         | This is only Docker network internal, we'll force HTTPS for internet traffic later |
+         | Forward Hostname / IP | the `web` container's name | `tracker-backend-web-1` | See previous step                                                                  |
+         | Forward Port          | 80                         |                         |                                                                                    |
+         | Block Common Exploits | yes                        |                         |                                                                                    |
 
       - "SSL" Tab
 

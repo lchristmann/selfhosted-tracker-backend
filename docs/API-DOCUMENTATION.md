@@ -22,7 +22,7 @@ When making HTTP requests to the API, **send those two headers:**
 - Authorization: Bearer <your_api_token>
 
 The bearer token is the Laravel Sanctum personal access token, which only the
-administrator of the Quokka Tracker Backend sees once, when he creates a new user.
+administrator of the Tracker Backend sees once, when he creates a new user.
 
 ## Endpoints
 

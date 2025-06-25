@@ -1,6 +1,6 @@
 services:
   web:
-    image: leanderchristmann/quokka-tracker-backend-nginx:1.0.0
+    image: leanderchristmann/tracker-backend-nginx:1.0.0
     restart: unless-stopped # Automatically restart unless the service is explicitly stopped
     volumes:
       # Mount the 'laravel-storage-production' volume to '/var/www/storage' inside the container.
@@ -11,7 +11,7 @@ services:
       # -----------------------------------------------------------
       - laravel-storage-production:/var/www/storage:ro
     networks:
-      - quokka-tracker-backend-network
+      - tracker-backend-network
     ports:
       # Map port 80 inside the container to the port specified by 'NGINX_PORT' on the host machine.
       # -----------------------------------------------------------
@@ -25,14 +25,14 @@ services:
 
   php-fpm:
     # For the php-fpm service, we will create a custom image to install the necessary PHP extensions and setup proper permissions.
-    image: leanderchristmann/quokka-tracker-backend:1.1.0
+    image: leanderchristmann/tracker-backend:1.1.0
     restart: unless-stopped
     volumes:
       - laravel-storage-production:/var/www/storage  # Mount the storage volume
     env_file:
       - .env
     networks:
-      - quokka-tracker-backend-network
+      - tracker-backend-network
     healthcheck:
       test: ["CMD-SHELL", "php-fpm-healthcheck || exit 1"]
       interval: 10s
@@ -58,7 +58,7 @@ services:
     volumes:
       - postgres-data-production:/var/lib/postgresql/data
     networks:
-      - quokka-tracker-backend-network
+      - tracker-backend-network
     # Health check for PostgreSQL
     # -----------------------------------------------------------
     # Health checks allow Docker to determine if a service is operational.
@@ -77,7 +77,7 @@ networks:
   # This custom network allows all services within it to communicate using their service names as hostnames.
   # For example, 'php-fpm' can connect to 'postgres' by using 'postgres' as the hostname.
   # -----------------------------------------------------------
-  quokka-tracker-backend-network:
+  tracker-backend-network:
     external: true
 
 volumes:

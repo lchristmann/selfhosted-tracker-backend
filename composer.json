@@ -1,7 +1,7 @@
 {
-    "name": "lchristmann/quokka-tracker-backend",
+    "name": "lchristmann/selfhosted-tracker-backend",
     "type": "project",
-    "description": "The Quokka Tracker Backend.",
+    "description": "The Tracker Backend.",
     "keywords": ["laravel", "framework"],
     "license": "MIT",
     "require": {

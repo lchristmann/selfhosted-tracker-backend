@@ -1,9 +1,9 @@
-# Quokka Tracker Backend <!-- omit in toc -->
+# Tracker Backend <!-- omit in toc -->
 
 > The self-hosted setup is incredibly easy - just follow the instructions in the [setup guide](docs/SETUP-GUIDE.md)
 > and the tiny [upgrade guide](docs/UPGRADE-GUIDE.md).
 
-> As a Quokka Tracker Administrator, consider the [admin guide](docs/ADMIN-GUIDE.md).
+> As a Tracker Administrator, consider the [admin guide](docs/ADMIN-GUIDE.md).
 
 ## Table of Contents <!-- omit in toc -->
 
@@ -16,10 +16,8 @@
 - [Release](#release)
   - [Test the new release](#test-the-new-release)
   - [Make the new release available to the public](#make-the-new-release-available-to-the-public)
+  - [Release the Nginx Image (rarely needed)](#release-the-nginx-image-rarely-needed)
 - [Maintenance](#maintenance)
-
-This Quokka Tracker Backend powers the [Quokka Tracker Android App](https://github.com/lchristmann/quokka-tracker-android-app). It is a lightweight, containerized Laravel API
-for managing user profiles and associated location data.
 
 ## Architecture
 
@@ -103,7 +101,7 @@ Seeding the database generates:
 ## Release
 
 The application code must be containerized as shown within the `compose.prod.yaml` `web` service
-and published to the Docker Hub repository [leanderchristmann/quokka-tracker-backend](https://hub.docker.com/repository/docker/leanderchristmann/quokka-tracker-backend/general).
+and published to the Docker Hub repository [leanderchristmann/tracker-backend](https://hub.docker.com/repository/docker/leanderchristmann/tracker-backend/general).
 
 ```shell
 docker login
@@ -121,15 +119,17 @@ Then build, tag and push the docker image:
 docker build \
   -f ./docker/common/php-fpm/Dockerfile \
   --target production \
-  -t leanderchristmann/quokka-tracker-backend:${VERSION} \
-  -t leanderchristmann/quokka-tracker-backend:latest \
+  -t leanderchristmann/tracker-backend:${VERSION} \
+  -t leanderchristmann/tracker-backend:latest \
   .
 ```
 
 ```shell
-docker push leanderchristmann/quokka-tracker-backend:${VERSION}
-docker push leanderchristmann/quokka-tracker-backend:latest
+docker push leanderchristmann/tracker-backend:${VERSION}
+docker push leanderchristmann/tracker-backend:latest
 ```
+
+Now commit your changed code.
 
 Also tag the Git release: 
 
@@ -138,9 +138,9 @@ git tag -a "${VERSION}" -m "Release ${VERSION}"
 git push origin "${VERSION}"
 ```
 
-Finally, [create a GitHub release](https://github.com/lchristmann/quokka-tracker-backend/releases) via the GitHub UI -
+Finally, [create a GitHub release](https://github.com/lchristmann/selfhosted-tracker-backend/releases) via the GitHub UI -
 it's takes the Git tag and lets you add some meta-information to it.
-Give a title like `1.1.0`, a heading like `## What's Changed` and put a bullet point list of changes.
+Give a title like `2.1.0`, a heading like `## What's Changed` and put a bullet point list of changes.
 
 ### Test the new release
 
@@ -148,20 +148,39 @@ In the docker-compose.yml **on your server**, bump up the version to what you've
 
 ```yaml
 php-fpm:
-    image: leanderchristmann/quokka-tracker-backend:1.0.0 # increase this
+    image: leanderchristmann/tracker-backend:2.0.0 # increase this
 ```
 
 ### Make the new release available to the public
 
 Make this same adaptation (see previous section [Test the new release](#test-the-new-release)) to the `docker-compose.yaml` **in this repository** and push it (simple git commit).
-Now everybody following the setup guide, gets the new version of the Quokka Tracker Backend.
+Now everybody following the setup guide, gets the new version of the Tracker Backend.
 
 ```yaml
 php-fpm:
-    image: leanderchristmann/quokka-tracker-backend:1.0.0 # increase this
+    image: leanderchristmann/tracker-backend:2.0.0 # increase this
 ```
 
-> The web container [leanderchristmann/quokka-tracker-backend-nginx:1.0.0](https://hub.docker.com/r/leanderchristmann/quokka-tracker-backend) required by the `docker-compose.yaml` was released by using the commands presented above, too.
+### Release the Nginx Image (rarely needed)
+
+```shell
+VERSION=1.0.0 # Set a version that you want to release
+```
+
+```shell
+docker build \
+  -f ./docker/production/nginx/Dockerfile \
+  -t leanderchristmann/tracker-backend-nginx:${VERSION} \
+  -t leanderchristmann/tracker-backend-nginx:latest \
+  .
+```
+
+```shell
+docker push leanderchristmann/tracker-backend-nginx:${VERSION}
+docker push leanderchristmann/tracker-backend-nginx:latest
+```
+
+Then put that version (`leanderchristmann/tracker-backend-nginx:X.X.X`) in the `docker-compose.yaml` file.
 
 ## Maintenance
 

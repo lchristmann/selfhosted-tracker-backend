@@ -5,7 +5,7 @@ This project is based on the official [Laravel Docker Example Project](https://g
 
 What I changed:
 
-- [remove Redis entirely](https://github.com/lchristmann/quokka-tracker-backend/commit/f84bdfa41a56a770a2ccf759cfe83d0fc4944b4c) from the setup
+- [remove Redis entirely](https://github.com/lchristmann/tracker-backend/commit/f84bdfa41a56a770a2ccf759cfe83d0fc4944b4c) from the setup
 - upgrade Laravel to `^12.15` and
 - add [Laravel Sanctum](https://laravel.com/docs/12.x/sanctum) for API authentication
 
@@ -133,8 +133,6 @@ docker compose -f compose.dev.yaml up -d
 ```bash
 docker compose -f compose.dev.yaml exec workspace bash
 composer install
-npm install
-npm run dev
 ```
 
 4. Run Migrations:
@@ -153,7 +151,7 @@ Here are some common commands and tips for using the development environment:
 
 ### Accessing the Workspace Container
 
-The workspace sidecar container includes Composer, Node.js, NPM, and other tools necessary for Laravel development (e.g. assets building).
+The workspace sidecar container includes Composer and other tools necessary for Laravel development.
 
 ```bash
 docker compose -f compose.dev.yaml exec workspace bash
