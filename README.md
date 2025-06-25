@@ -5,6 +5,17 @@
 
 > As a Tracker Administrator, consider the [admin guide](docs/ADMIN-GUIDE.md).
 
+I built this API intending to use it in an upgraded version of my Geolocation Tracking Android application called [Tracker](https://github.com/lchristmann/Tracker).
+
+So far I did not do the upgrade though. The plan is to give it a beautiful UI using React Native + Tailwind
+and turn the location tracking core code (written in Kotlin) into a [Native Module](https://reactnative.dev/docs/turbo-native-modules-introduction)
+because the native Android APIs for guaranteed background work and location tracking
+are a lot more reliable than what React Native itself offers.
+
+Feel free to build your own mobile apps though and just take this API Backend.
+
+It's pretty powerful, even supporting timezones (when a day starts and ends, depends on the timezone you're in, so that's important).
+
 ## Table of Contents <!-- omit in toc -->
 
 - [Architecture](#architecture)
