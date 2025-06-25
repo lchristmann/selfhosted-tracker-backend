@@ -81,7 +81,7 @@ docker compose -f compose.dev.yaml down # Shut it down
 ```
 
 If you want to test out the production environment locally, use the minimal `compose.prod.yaml` file (no workspace container).
-It mirrors the official `compose.yaml` file for easy self-hosting, but uses the local code instead of the release on Docker Hub.
+It's basically the same as the `docker-compose.yaml` file which is offered for the easy self-hosting, but uses the local project code instead of the released image on Docker Hub.
 
 The most complex part of the codebase is a large SQL query in `LocationController.php`. Refer to [SQL-QUERY-EXPLANATION.md](docs/SQL-QUERY-EXPLANATION.md) for an in-depth breakdown.
 
